@@ -40,4 +40,13 @@ router.post('/recipes/:id/edit', async (req, res) => {
 	res.redirect(`/recipes/${recipeId}`)
 })
 
-module.exports = router
+router.get('/recipes/random', async (req, res) => {
+	const db = await getDbConnection()
+	const recipes = await db.all('SELECT * FROM recipes')
+	if (!recipes || recipes.length === 0) {
+		return res.render('recipe', { recipe: null, message: 'No recipes found.' })
+	}
+	const randomIndex = Math.floor(Math.random() * recipes.length)
+	const recipe = recipes[randomIndex]
+	res.render('recipe', { recipe })
+})
